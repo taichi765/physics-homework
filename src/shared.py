@@ -4,9 +4,10 @@ from numba import njit
 K = 6.33 * (10**4)
 R_OTHERS_4 = np.array([[1.0, 1.0], [-1.0, 1.0], [-1.0, -1.0], [1.0, -1.0]])
 R_OTHERS_2 = np.array([[0.04, 0.0], [-0.04, 0.0]])
-M1_MAG = -18 * (10**-5)
-M_OTHERS_4 = np.array([18 * (10**-5), 18 * (10**-5), 18 * (10**-5), 18 * (10**-5)])
-M_OTHERS_2 = np.array([18 * (10**-5), 18 * (10**-5)])
+# 200ミリテスラ ✕ 底面積
+M1_MAG = 0.2 * np.pi * (0.02 * 0.02)
+M_OTHERS_4 = np.full((4,), -M1_MAG)
+M_OTHERS_2 = np.full((2,), -M1_MAG)
 MASS = 0.006
 DT = 0.005
 STEPS = 7000
