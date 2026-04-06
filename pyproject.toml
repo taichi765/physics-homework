@@ -1,0 +1,15 @@
+[project]
+name = "physics-profiling"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "jupyter>=1.1.1",
+    "line-profiler>=5.0.2",
+    "matplotlib>=3.10.8",
+    "numba>=0.65.0",
+    "numpy>=2.4.4",
+    "profila>=0.3.2",
+    "pyqt6>=6.11.0",
+]
