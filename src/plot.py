@@ -1,7 +1,7 @@
 from datetime import datetime
 from argparse import ArgumentParser
 import logging
-from matplotlib.animation import ArtistAnimation
+from matplotlib.animation import FuncAnimation
 import numpy as np
 import matplotlib.pyplot as plt
 from shared import DT, STEPS, get_acceleration_2
@@ -33,44 +33,52 @@ def calc_and_plot(params, args):
 
     rs = np.array(rs)
     vs = np.array(vs)
-    fig = plt.figure(figsize=(10, 20))
+    fig = plt.figure(figsize=(20, 10))
 
-    ax1 = fig.add_subplot(1, 2, 1)
-    ax1.plot(0.04, 0, "ro")
-    ax1.plot(-0.04, 0, "ro")
+    ax1 = fig.add_subplot(2, 2, 1)
     ax1.grid()
     ax1.set_aspect("equal")
     ax1.set_xlabel("x")
     ax1.set_ylabel("y")
     ax1.set_title("x-y")
-    # ax1.set_xlim(-0.2, 0.2)
-    # ax1.set_ylim(-0.2, 0.2)
+    ax1.set_xlim(-2, 2)
+    ax1.set_ylim(-2, 2)
+    (xy_line,) = ax1.plot([], [], "b")
+    ax1.plot(0.04, 0, "ro")
+    ax1.plot(-0.04, 0, "ro")
 
-    ax2 = fig.add_subplot(1, 2, 2)
+    ax2 = fig.add_subplot(2, 2, 2)
     ax2.grid()
     ax2.set_aspect("equal")
     ax2.set_xlabel("vx")
     ax2.set_ylabel("vy")
     ax2.set_title("vx-vy")
-    ax2.set_xlim(-5, 5)
-    ax2.set_ylim(-5, 5)
+    ax2.set_xlim(-2, 2)
+    ax2.set_ylim(-2, 2)
+    (vxvy_line,) = ax2.plot([], [], "b")
+
+    ax3 = fig.add_subplot(2, 2, 3)
+    ax3.grid()
+    ax3.set_xlabel("t [s]")
+    ax3.set_ylabel("v [m/s]")
+    ax3.set_title("v-t")
+    ax3.set_xlim(0, 35)
+    ax3.set_ylim(0, 2)
+    (vt_line,) = ax3.plot([], [], "b")
 
     if args.animation:
-        xy_artists = []
-        # vxvy_artists = []
 
-        for i in range(STEPS):
-            xy_art = ax1.plot(rs[:i, 0], rs[:i, 1], "b")
-            xy_artists.append(xy_art)
-            # vxvy_art = ax2.plot(vs[:i, 0], vs[:i, 1], "b")
-            # vxvy_artists.append(vxvy_art)
+        def update_frame(i):
+            xy_line.set_data(rs[:i, 0], rs[:i, 1])
+            vxvy_line.set_data(vs[:i, 0], vs[:i, 1])
+            vt_line.set_data(np.arange(0, i, 1) * DT, np.linalg.norm(vs[:i], axis=1))
+            return (xy_line, vxvy_line, vt_line)
 
-        xy_anim = ArtistAnimation(fig, xy_artists, interval=1, blit=True)
-        # vxvy_anim = ArtistAnimation(fig, vxvy_artists)
+        anim = FuncAnimation(fig, update_frame, blit=True, frames=STEPS, interval=0.1)
 
         if args.file:
             print("saving...")
-            xy_anim.save(
+            anim.save(
                 f"videos/{datetime.now().strftime('%Y-%m-%d__%H_%M_%S')}.mp4",
                 writer="ffmpeg",
                 fps=30,
@@ -106,7 +114,7 @@ def main():
     args = parser.parse_args()
     init_val = None
     if args.init_val is None:
-        init_val = np.array([1.4, 0.9, -0.1, 0.7])
+        init_val = np.array([0.1, 1.3, -0.8, 0.1])
     else:
         init_val = np.array(args.init_val)
 
