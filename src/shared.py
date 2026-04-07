@@ -1,7 +1,9 @@
 import numpy as np
 from numba import njit
 
-K = 6.33 * (10**4)
+# 真空の透磁率
+MU0 = 4 * np.pi * (10**-7)
+K = 1 / (4 * np.pi * MU0)
 R_OTHERS_4 = np.array([[1.0, 1.0], [-1.0, 1.0], [-1.0, -1.0], [1.0, -1.0]])
 R_OTHERS_2 = np.array([[0.04, 0.0], [-0.04, 0.0]])
 # 200ミリテスラ ✕ 底面積

@@ -51,15 +51,8 @@ def calc(rx_0, ry_0, vx_0, vy_0):
     raise Exception("ポアンカレ断面に一度も到達していません", rx_0, ry_0, vx_0, vy_0)
 
 
-def main():
-    start = time.time()
-
-    X = np.arange(0.1, 1.5, 0.1)
-    Y = np.arange(0.1, 1.5, 0.1)
-    VX = np.arange(-1, 1, 0.1)
-    VY = np.arange(0.1, 1, 0.1)
-
-    params_list = list(itertools.product(X, Y, VX, VY))
+@njit(cache=True, parallel=True)
+def loop_calc(params_list):
     n = len(params_list)
     print(f"Total combinations: {n}")
 
@@ -73,6 +66,19 @@ def main():
         except Exception:
             pass
 
+    return results
+
+
+def main():
+    start = time.time()
+    X = np.arange(0.1, 1.5, 0.1)
+    Y = np.arange(0.1, 1.5, 0.1)
+    VX = np.arange(-1, 1, 0.1)
+    VY = np.arange(0.1, 1, 0.1)
+
+    params_list = list(itertools.product(X, Y, VX, VY))
+
+    results = loop_calc(params_list)
     print(f"found {len(results)} periodic solution")
 
     with open("res.csv", mode="w") as f:

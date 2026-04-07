@@ -33,7 +33,7 @@ def calc_and_plot(params, args):
 
     rs = np.array(rs)
     vs = np.array(vs)
-    fig = plt.figure(figsize=(20, 10))
+    fig = plt.figure(figsize=(12, 6))
 
     ax1 = fig.add_subplot(2, 2, 1)
     ax1.grid()
